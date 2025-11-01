@@ -53,6 +53,12 @@
   font-weight: 600;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 .header-info {
   display: flex;
   align-items: center;
@@ -73,6 +79,30 @@
 
 .feedback-link:hover .feedback-cta {
   text-decoration: underline;
+}
+
+.customize-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #0B5FAB;
+  color: #0B5FAB;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.customize-btn:hover {
+  background: #E8F3FC;
+}
+
+.customize-icon {
+  font-size: 1rem;
 }
 
 @media (max-width: 768px) {

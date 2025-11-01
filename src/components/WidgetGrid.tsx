@@ -5,9 +5,17 @@ import './WidgetGrid.css';
 
 interface WidgetGridProps {
   widgets: Widget[];
+  isEditMode?: boolean;
+  onOpenAddModal?: (column: number) => void;
+  onDeleteWidget?: (widgetId: string) => void;
 }
 
-export const WidgetGrid: React.FC<WidgetGridProps> = ({ widgets }) => {
+export const WidgetGrid: React.FC<WidgetGridProps> = ({
+  widgets,
+  isEditMode = false,
+  onOpenAddModal,
+  onDeleteWidget
+}) => {
   // Group widgets by column following Canvas LMS pattern
   const widgetsAsColumns = (widgets: Widget[]): Widget[][] => {
     const inColumns = widgets.reduce(
@@ -27,7 +35,7 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({ widgets }) => {
     return inColumns;
   };
 
-  const renderWidget = (widget: Widget) => {
+  const renderWidget = (widget: Widget, index: number, columnIndex: number) => {
     if (!widget.enabled) return null;
 
     const widgetRenderer = getWidget(widget.type);
@@ -40,7 +48,44 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({ widgets }) => {
     }
 
     const WidgetComponent = widgetRenderer.component;
-    return <WidgetComponent key={widget.id} widget={widget} />;
+
+    return (
+      <React.Fragment key={widget.id}>
+        {isEditMode && index === 0 && (
+          <button
+            className="add-widget-btn"
+            onClick={() => onOpenAddModal?.(columnIndex + 1)}
+          >
+            + Add widget
+          </button>
+        )}
+        <div className={`widget-wrapper ${isEditMode ? 'edit-mode' : ''}`}>
+          {isEditMode && (
+            <div className="widget-controls">
+              <button className="widget-drag-handle" title="Drag to reorder">
+                ⋮⋮
+              </button>
+              <button
+                className="widget-delete-btn"
+                onClick={() => onDeleteWidget?.(widget.id)}
+                title="Remove widget"
+              >
+                🗑
+              </button>
+            </div>
+          )}
+          <WidgetComponent widget={widget} />
+        </div>
+        {isEditMode && (
+          <button
+            className="add-widget-btn"
+            onClick={() => onOpenAddModal?.(columnIndex + 1)}
+          >
+            + Add widget
+          </button>
+        )}
+      </React.Fragment>
+    );
   };
 
   const widgetsByColumn = widgetsAsColumns(widgets.filter(w => w.enabled));
@@ -48,10 +93,26 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({ widgets }) => {
   return (
     <div className="widget-grid" data-testid="widget-columns">
       <div className="widget-column widget-column-left">
-        {widgetsByColumn[0]?.map(renderWidget)}
+        {isEditMode && widgetsByColumn[0]?.length === 0 && (
+          <button
+            className="add-widget-btn"
+            onClick={() => onOpenAddModal?.(1)}
+          >
+            + Add widget
+          </button>
+        )}
+        {widgetsByColumn[0]?.map((widget, index) => renderWidget(widget, index, 0))}
       </div>
       <div className="widget-column widget-column-right">
-        {widgetsByColumn[1]?.map(renderWidget)}
+        {isEditMode && widgetsByColumn[1]?.length === 0 && (
+          <button
+            className="add-widget-btn"
+            onClick={() => onOpenAddModal?.(2)}
+          >
+            + Add widget
+          </button>
+        )}
+        {widgetsByColumn[1]?.map((widget, index) => renderWidget(widget, index, 1))}
       </div>
     </div>
   );

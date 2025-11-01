@@ -27,6 +27,76 @@
   margin-bottom: 1rem;
 }
 
+.add-widget-btn {
+  background: transparent;
+  border: 2px dashed #0B5FAB;
+  color: #0B5FAB;
+  padding: 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.add-widget-btn:hover {
+  background: #E8F3FC;
+  border-style: solid;
+}
+
+.widget-wrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.widget-wrapper.edit-mode {
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.widget-wrapper.edit-mode:hover {
+  border-color: #0B5FAB;
+  box-shadow: 0 2px 8px rgba(11, 95, 171, 0.1);
+}
+
+.widget-controls {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+  background: white;
+  padding: 0.25rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.widget-drag-handle,
+.widget-delete-btn {
+  background: white;
+  border: 1px solid #C7CDD1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.widget-drag-handle:hover {
+  background: #E8F3FC;
+  border-color: #0B5FAB;
+}
+
+.widget-delete-btn:hover {
+  background: #FCE8E8;
+  border-color: #D01A19;
+}
+
 @media (max-width: 968px) {
   .widget-grid {
     flex-direction: column;

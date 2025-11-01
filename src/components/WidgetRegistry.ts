@@ -3,12 +3,13 @@ import { CourseWorkWidget } from './CourseWorkWidget';
 import { CourseGradesWidget } from './CourseGradesWidget';
 import { AnnouncementsWidget } from './AnnouncementsWidget';
 import { PeopleWidget } from './PeopleWidget';
+import { ProgressOverviewWidget } from './ProgressOverviewWidget';
 
 const WIDGET_REGISTRY: Record<string, WidgetRegistryItem> = {
   'course-work': {
     type: 'course-work',
     component: CourseWorkWidget,
-    defaultTitle: 'Course work'
+    defaultTitle: 'My course work'
   },
   'course-grades': {
     type: 'course-grades',
@@ -24,6 +25,11 @@ const WIDGET_REGISTRY: Record<string, WidgetRegistryItem> = {
     type: 'people',
     component: PeopleWidget,
     defaultTitle: 'People'
+  },
+  'progress-overview': {
+    type: 'progress-overview',
+    component: ProgressOverviewWidget,
+    defaultTitle: 'Progress overview'
   }
 };
 
