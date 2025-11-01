@@ -1,0 +1,88 @@
+.people-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.person-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: #F5F5F5;
+  border-radius: 4px;
+}
+
+.person-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #0B5FAB;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.person-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.person-name {
+  font-weight: 600;
+  color: #2D3B45;
+}
+
+.person-role {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  width: fit-content;
+}
+
+.role-green {
+  background: #0B874B;
+}
+
+.role-blue {
+  background: #0B5FAB;
+}
+
+.role-red {
+  background: #D01A19;
+}
+
+.role-purple {
+  background: #8B5FA6;
+}
+
+.role-orange {
+  background: #C67D33;
+}
+
+.person-course {
+  font-size: 0.75rem;
+  color: #556572;
+}
+
+.message-btn {
+  background: white;
+  border: 1px solid #C7CDD1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.message-btn:hover {
+  background: #F5F5F5;
+}

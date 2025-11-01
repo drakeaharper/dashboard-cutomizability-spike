@@ -1,0 +1,111 @@
+.read-filter {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #C7CDD1;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+}
+
+.announcements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.announcement-item {
+  display: flex;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #E5E5E5;
+}
+
+.announcement-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.announcement-checkbox {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  color: #C7CDD1;
+  line-height: 1;
+  margin-top: 0.25rem;
+}
+
+.announcement-checkbox:hover {
+  color: #0B5FAB;
+}
+
+.announcement-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #0B5FAB;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.announcement-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.announcement-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.announcement-course {
+  font-size: 0.75rem;
+  color: #556572;
+}
+
+.new-badge {
+  background: #0B874B;
+  color: white;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+.announcement-title {
+  font-weight: 600;
+  color: #2D3B45;
+  margin-bottom: 0.25rem;
+}
+
+.announcement-meta {
+  font-size: 0.75rem;
+  color: #556572;
+  margin-bottom: 0.5rem;
+}
+
+.announcement-preview {
+  font-size: 0.875rem;
+  color: #2D3B45;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.read-more {
+  font-size: 0.875rem;
+  color: #0B5FAB;
+  text-decoration: none;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}

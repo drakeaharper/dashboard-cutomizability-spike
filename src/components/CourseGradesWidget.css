@@ -1,0 +1,135 @@
+.show-grades-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #2D3B45;
+}
+
+.show-grades-toggle input {
+  cursor: pointer;
+}
+
+.course-grades-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.course-grade-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  background: #F5F5F5;
+  border-radius: 4px;
+}
+
+.course-info {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.course-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+}
+
+.badge-green {
+  background: #0B874B;
+}
+
+.badge-blue {
+  background: #0B5FAB;
+}
+
+.badge-red {
+  background: #D01A19;
+}
+
+.badge-purple {
+  background: #8B5FA6;
+}
+
+.badge-orange {
+  background: #C67D33;
+}
+
+.course-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.course-name {
+  font-weight: 600;
+  color: #2D3B45;
+}
+
+.grade-updated {
+  font-size: 0.75rem;
+  color: #556572;
+}
+
+.view-gradebook {
+  font-size: 0.875rem;
+  color: #0B5FAB;
+  text-decoration: none;
+}
+
+.view-gradebook:hover {
+  text-decoration: underline;
+}
+
+.grade-display {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.grade-label {
+  font-size: 0.75rem;
+  color: #556572;
+}
+
+.current-grade {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2D3B45;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.pagination-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #C7CDD1;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  min-width: 2.5rem;
+}
+
+.pagination-btn:hover {
+  background: #F5F5F5;
+}
+
+.pagination-btn.active {
+  background: #0B5FAB;
+  color: white;
+  border-color: #0B5FAB;
+}
