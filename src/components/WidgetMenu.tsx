@@ -5,6 +5,7 @@ interface WidgetMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onDelete: () => void;
+  onMoveAction?: (action: string) => void;
   widgetTitle: string;
 }
 
@@ -12,6 +13,7 @@ export const WidgetMenu: React.FC<WidgetMenuProps> = ({
   isOpen,
   onClose,
   onDelete,
+  onMoveAction,
   widgetTitle
 }) => {
   if (!isOpen) return null;
@@ -23,6 +25,7 @@ export const WidgetMenu: React.FC<WidgetMenuProps> = ({
 
   const handleAction = (action: string) => {
     console.log('Widget action:', action);
+    onMoveAction?.(action);
     onClose();
   };
 
@@ -34,13 +37,13 @@ export const WidgetMenu: React.FC<WidgetMenuProps> = ({
           <h3 className="widget-menu-title">{widgetTitle}</h3>
         </div>
         <div className="widget-menu-items">
-          <button className="widget-menu-item" onClick={() => handleAction('move-right')}>
-            <span className="menu-item-icon">→</span>
-            <span className="menu-item-label">Move right</span>
-          </button>
           <button className="widget-menu-item" onClick={() => handleAction('move-left')}>
             <span className="menu-item-icon">←</span>
             <span className="menu-item-label">Move left</span>
+          </button>
+          <button className="widget-menu-item" onClick={() => handleAction('move-right')}>
+            <span className="menu-item-icon">→</span>
+            <span className="menu-item-label">Move right</span>
           </button>
           <button className="widget-menu-item" onClick={() => handleAction('move-to-top')}>
             <span className="menu-item-icon">⇈</span>
