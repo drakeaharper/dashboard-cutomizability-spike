@@ -73,6 +73,7 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
   const WidgetComponent = widgetRenderer.component;
 
   const handleMenuClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     onMenuToggle(widget.id);
   };
@@ -85,21 +86,21 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
     >
       {isEditMode && (
         <div className="widget-controls">
-          <button
-            className="widget-drag-handle"
-            title="Drag to reorder"
-            {...attributes}
-            {...listeners}
-          >
-            ⋮⋮
-          </button>
           <div className="widget-menu-container">
             <button
-              className="widget-menu-btn"
-              title="Widget options"
+              className="widget-drag-handle"
+              title="Drag to reorder or click for options"
               onClick={handleMenuClick}
+              onPointerDown={(e) => {
+                // Let the drag handler take over if dragging
+                const dragHandler = listeners?.onPointerDown;
+                if (dragHandler) {
+                  dragHandler(e as any);
+                }
+              }}
+              {...attributes}
             >
-              ⋮
+              ⋮⋮
             </button>
             <WidgetMenu
               isOpen={isMenuOpen}
@@ -108,6 +109,16 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
               widgetTitle={widget.title}
             />
           </div>
+          <button
+            className="widget-delete-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            title="Remove widget"
+          >
+            🗑
+          </button>
         </div>
       )}
       <WidgetComponent widget={widget} />

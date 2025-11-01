@@ -52,9 +52,17 @@
   background: #F5F5F5;
 }
 
+.widget-menu-item-danger:hover {
+  background: #FCE8E8;
+}
+
 .menu-item-icon {
   font-size: 1.25rem;
   line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
 }
 
 .menu-item-label {
