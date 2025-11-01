@@ -1,22 +1,155 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import type { Widget } from '../types/widgets';
 import { getWidget } from './WidgetRegistry';
+import { WidgetMenu } from './WidgetMenu';
 import './WidgetGrid.css';
 
 interface WidgetGridProps {
   widgets: Widget[];
   isEditMode?: boolean;
-  onOpenAddModal?: (column: number) => void;
+  onOpenAddModal?: (column: number, insertIndex?: number) => void;
   onDeleteWidget?: (widgetId: string) => void;
+  onReorderWidgets?: (widgets: Widget[]) => void;
 }
+
+interface SortableWidgetProps {
+  widget: Widget;
+  isEditMode: boolean;
+  onDelete: () => void;
+  onMenuToggle: (widgetId: string) => void;
+  isMenuOpen: boolean;
+}
+
+const SortableWidget: React.FC<SortableWidgetProps> = ({
+  widget,
+  isEditMode,
+  onDelete,
+  onMenuToggle,
+  isMenuOpen
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: widget.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const widgetRenderer = getWidget(widget.type);
+  if (!widgetRenderer) {
+    return (
+      <div className="widget-error">
+        Unknown widget type: {widget.type}
+      </div>
+    );
+  }
+
+  const WidgetComponent = widgetRenderer.component;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`widget-wrapper ${isEditMode ? 'edit-mode' : ''}`}
+    >
+      {isEditMode && (
+        <div className="widget-controls">
+          <button
+            className="widget-drag-handle"
+            title="Drag to reorder or click for options"
+            onClick={() => onMenuToggle(widget.id)}
+            {...attributes}
+            {...listeners}
+          >
+            ⋮⋮
+          </button>
+          <WidgetMenu
+            isOpen={isMenuOpen}
+            onClose={() => onMenuToggle('')}
+            onDelete={onDelete}
+            widgetTitle={widget.title}
+          />
+        </div>
+      )}
+      <WidgetComponent widget={widget} />
+    </div>
+  );
+};
+
+interface DroppableAddButtonProps {
+  column: number;
+  insertIndex?: number;
+  onOpenModal: (column: number, insertIndex?: number) => void;
+  isOver?: boolean;
+}
+
+const DroppableAddButton: React.FC<DroppableAddButtonProps> = ({
+  column,
+  insertIndex,
+  onOpenModal,
+  isOver = false
+}) => {
+  return (
+    <button
+      className={`add-widget-btn ${isOver ? 'drag-over' : ''}`}
+      onClick={() => onOpenModal(column, insertIndex)}
+      data-droppable="true"
+      data-column={column}
+      data-insert-index={insertIndex}
+    >
+      + Add widget
+    </button>
+  );
+};
 
 export const WidgetGrid: React.FC<WidgetGridProps> = ({
   widgets,
   isEditMode = false,
   onOpenAddModal,
-  onDeleteWidget
+  onDeleteWidget,
+  onReorderWidgets
 }) => {
-  // Group widgets by column following Canvas LMS pattern
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string>('');
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Group widgets by column
   const widgetsAsColumns = (widgets: Widget[]): Widget[][] => {
     const inColumns = widgets.reduce(
       (acc, widget) => {
@@ -27,7 +160,6 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
       [[] as Widget[], [] as Widget[]] as Widget[][]
     );
 
-    // Sort each column by row position
     inColumns.forEach((column, idx) => {
       inColumns[idx] = column.sort((a, b) => a.position.row - b.position.row);
     });
@@ -35,85 +167,129 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
     return inColumns;
   };
 
-  const renderWidget = (widget: Widget, index: number, columnIndex: number) => {
-    if (!widget.enabled) return null;
+  const widgetsByColumn = widgetsAsColumns(widgets.filter(w => w.enabled));
 
-    const widgetRenderer = getWidget(widget.type);
-    if (!widgetRenderer) {
-      return (
-        <div key={widget.id} className="widget-error">
-          Unknown widget type: {widget.type}
-        </div>
-      );
-    }
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+    setOpenMenuId('');
+  };
 
-    const WidgetComponent = widgetRenderer.component;
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+
+    if (!over || active.id === over.id) return;
+
+    const activeWidget = widgets.find(w => w.id === active.id);
+    if (!activeWidget) return;
+
+    // Find which column the widget was dropped in
+    const activeColumn = activeWidget.position.col;
+    const columnWidgets = widgets.filter(w => w.position.col === activeColumn && w.enabled);
+
+    const oldIndex = columnWidgets.findIndex(w => w.id === active.id);
+    const newIndex = columnWidgets.findIndex(w => w.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reorderedColumnWidgets = arrayMove(columnWidgets, oldIndex, newIndex);
+
+    // Update row positions
+    const updatedWidgets = widgets.map(widget => {
+      if (widget.position.col === activeColumn && widget.enabled) {
+        const newRowIndex = reorderedColumnWidgets.findIndex(w => w.id === widget.id);
+        if (newRowIndex !== -1) {
+          return {
+            ...widget,
+            position: {
+              ...widget.position,
+              row: newRowIndex
+            }
+          };
+        }
+      }
+      return widget;
+    });
+
+    onReorderWidgets?.(updatedWidgets);
+  };
+
+  const handleMenuToggle = (widgetId: string) => {
+    setOpenMenuId(openMenuId === widgetId ? '' : widgetId);
+  };
+
+  const renderColumn = (columnWidgets: Widget[], columnIndex: number) => {
+    const columnNumber = columnIndex + 1;
 
     return (
-      <React.Fragment key={widget.id}>
-        {isEditMode && index === 0 && (
-          <button
-            className="add-widget-btn"
-            onClick={() => onOpenAddModal?.(columnIndex + 1)}
-          >
-            + Add widget
-          </button>
+      <div className="widget-column" key={columnIndex}>
+        {isEditMode && columnWidgets.length === 0 && (
+          <DroppableAddButton
+            column={columnNumber}
+            onOpenModal={onOpenAddModal!}
+          />
         )}
-        <div className={`widget-wrapper ${isEditMode ? 'edit-mode' : ''}`}>
-          {isEditMode && (
-            <div className="widget-controls">
-              <button className="widget-drag-handle" title="Drag to reorder">
-                ⋮⋮
-              </button>
-              <button
-                className="widget-delete-btn"
-                onClick={() => onDeleteWidget?.(widget.id)}
-                title="Remove widget"
-              >
-                🗑
-              </button>
-            </div>
-          )}
-          <WidgetComponent widget={widget} />
-        </div>
-        {isEditMode && (
-          <button
-            className="add-widget-btn"
-            onClick={() => onOpenAddModal?.(columnIndex + 1)}
-          >
-            + Add widget
-          </button>
-        )}
-      </React.Fragment>
+
+        <SortableContext
+          items={columnWidgets.map(w => w.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {columnWidgets.map((widget, index) => (
+            <React.Fragment key={widget.id}>
+              {isEditMode && index === 0 && (
+                <DroppableAddButton
+                  column={columnNumber}
+                  insertIndex={0}
+                  onOpenModal={onOpenAddModal!}
+                />
+              )}
+              <SortableWidget
+                widget={widget}
+                isEditMode={isEditMode}
+                onDelete={() => onDeleteWidget?.(widget.id)}
+                onMenuToggle={handleMenuToggle}
+                isMenuOpen={openMenuId === widget.id}
+              />
+              {isEditMode && (
+                <DroppableAddButton
+                  column={columnNumber}
+                  insertIndex={index + 1}
+                  onOpenModal={onOpenAddModal!}
+                />
+              )}
+            </React.Fragment>
+          ))}
+        </SortableContext>
+      </div>
     );
   };
 
-  const widgetsByColumn = widgetsAsColumns(widgets.filter(w => w.enabled));
+  const activeWidget = activeId ? widgets.find(w => w.id === activeId) : null;
+  const activeWidgetRenderer = activeWidget ? getWidget(activeWidget.type) : null;
 
   return (
-    <div className="widget-grid" data-testid="widget-columns">
-      <div className="widget-column widget-column-left">
-        {isEditMode && widgetsByColumn[0]?.length === 0 && (
-          <button
-            className="add-widget-btn"
-            onClick={() => onOpenAddModal?.(1)}
-          >
-            + Add widget
-          </button>
-        )}
-        {widgetsByColumn[0]?.map((widget, index) => renderWidget(widget, index, 0))}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="widget-grid" data-testid="widget-columns">
+        <div className="widget-column-left">
+          {renderColumn(widgetsByColumn[0] || [], 0)}
+        </div>
+        <div className="widget-column-right">
+          {renderColumn(widgetsByColumn[1] || [], 1)}
+        </div>
       </div>
-      <div className="widget-column widget-column-right">
-        {isEditMode && widgetsByColumn[1]?.length === 0 && (
-          <button
-            className="add-widget-btn"
-            onClick={() => onOpenAddModal?.(2)}
-          >
-            + Add widget
-          </button>
-        )}
-        {widgetsByColumn[1]?.map((widget, index) => renderWidget(widget, index, 1))}
-      </div>
-    </div>
+
+      <DragOverlay>
+        {activeId && activeWidget && activeWidgetRenderer ? (
+          <div className="widget-wrapper dragging">
+            {React.createElement(activeWidgetRenderer.component, { widget: activeWidget })}
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 };

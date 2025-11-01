@@ -46,6 +46,10 @@ function App() {
     setWidgets(widgets.filter(w => w.id !== widgetId));
   };
 
+  const handleReorderWidgets = (reorderedWidgets: Widget[]) => {
+    setWidgets(reorderedWidgets);
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -81,6 +85,7 @@ function App() {
           isEditMode={isEditMode}
           onOpenAddModal={handleOpenModal}
           onDeleteWidget={handleDeleteWidget}
+          onReorderWidgets={handleReorderWidgets}
         />
       </main>
       <AddWidgetModal

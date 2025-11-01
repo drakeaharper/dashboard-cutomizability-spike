@@ -46,6 +46,14 @@
   border-style: solid;
 }
 
+.add-widget-btn.drag-over {
+  background: #E8F3FC;
+  border-style: solid;
+  border-color: #0B874B;
+  color: #0B874B;
+  box-shadow: 0 0 0 4px rgba(11, 135, 75, 0.1);
+}
+
 .widget-wrapper {
   position: relative;
   margin-bottom: 1rem;
@@ -60,6 +68,13 @@
 .widget-wrapper.edit-mode:hover {
   border-color: #0B5FAB;
   box-shadow: 0 2px 8px rgba(11, 95, 171, 0.1);
+}
+
+.widget-wrapper.dragging {
+  opacity: 0.9;
+  cursor: grabbing;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: rotate(2deg);
 }
 
 .widget-controls {
@@ -85,6 +100,14 @@
   font-size: 1rem;
   transition: all 0.2s;
   line-height: 1;
+}
+
+.widget-drag-handle {
+  cursor: grab;
+}
+
+.widget-drag-handle:active {
+  cursor: grabbing;
 }
 
 .widget-drag-handle:hover {
