@@ -1,12 +1,10 @@
 # Dashboard Customizability Spike
 
+> **🚀 [Live Demo](https://drakeaharper.github.io/dashboard-cutomizability-spike/)** | [Repository](https://github.com/drakeaharper/dashboard-cutomizability-spike)
+
 A proof-of-concept for a customizable widget dashboard inspired by [Canvas LMS's widget dashboard](https://github.com/instructure/canvas-lms/tree/master/ui/features/widget_dashboard). This spike demonstrates modern React patterns for building a flexible, widget-based interface.
 
 ![Dashboard Preview](docs/dashboard-preview.png)
-
-## Live Demo
-
-[View the live demo on GitHub Pages](https://drakeaharper.github.io/dashboard-cutomizability-spike/)
 
 ## Features
 
@@ -56,11 +54,9 @@ npm run dev
 npm run build
 ```
 
-### Deploy to GitHub Pages
+### Deployment
 
-```bash
-npm run deploy
-```
+This project is automatically deployed to GitHub Pages via GitHub Actions when changes are pushed to the `main` branch.
 
 ## Project Structure
 
