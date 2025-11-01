@@ -72,6 +72,11 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
 
   const WidgetComponent = widgetRenderer.component;
 
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onMenuToggle(widget.id);
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -82,12 +87,18 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
         <div className="widget-controls">
           <button
             className="widget-drag-handle"
-            title="Drag to reorder or click for options"
-            onClick={() => onMenuToggle(widget.id)}
+            title="Drag to reorder"
             {...attributes}
             {...listeners}
           >
             ⋮⋮
+          </button>
+          <button
+            className="widget-menu-btn"
+            title="Widget options"
+            onClick={handleMenuClick}
+          >
+            ⋮
           </button>
           <WidgetMenu
             isOpen={isMenuOpen}

@@ -91,6 +91,7 @@
 }
 
 .widget-drag-handle,
+.widget-menu-btn,
 .widget-delete-btn {
   background: white;
   border: 1px solid #C7CDD1;
@@ -104,6 +105,7 @@
 
 .widget-drag-handle {
   cursor: grab;
+  touch-action: none;
 }
 
 .widget-drag-handle:active {
@@ -111,6 +113,15 @@
 }
 
 .widget-drag-handle:hover {
+  background: #E8F3FC;
+  border-color: #0B5FAB;
+}
+
+.widget-menu-btn {
+  cursor: pointer;
+}
+
+.widget-menu-btn:hover {
   background: #E8F3FC;
   border-color: #0B5FAB;
 }
