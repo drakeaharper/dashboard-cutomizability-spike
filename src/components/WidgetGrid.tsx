@@ -93,19 +93,21 @@ const SortableWidget: React.FC<SortableWidgetProps> = ({
           >
             ⋮⋮
           </button>
-          <button
-            className="widget-menu-btn"
-            title="Widget options"
-            onClick={handleMenuClick}
-          >
-            ⋮
-          </button>
-          <WidgetMenu
-            isOpen={isMenuOpen}
-            onClose={() => onMenuToggle('')}
-            onDelete={onDelete}
-            widgetTitle={widget.title}
-          />
+          <div className="widget-menu-container">
+            <button
+              className="widget-menu-btn"
+              title="Widget options"
+              onClick={handleMenuClick}
+            >
+              ⋮
+            </button>
+            <WidgetMenu
+              isOpen={isMenuOpen}
+              onClose={() => onMenuToggle('')}
+              onDelete={onDelete}
+              widgetTitle={widget.title}
+            />
+          </div>
         </div>
       )}
       <WidgetComponent widget={widget} />
@@ -181,15 +183,20 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
   const widgetsByColumn = widgetsAsColumns(widgets.filter(w => w.enabled));
 
   const handleDragStart = (event: DragStartEvent) => {
+    console.log('Drag started:', event.active.id);
     setActiveId(event.active.id as string);
     setOpenMenuId('');
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    console.log('Drag ended:', { active: active.id, over: over?.id });
     setActiveId(null);
 
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id) {
+      console.log('No valid drop target');
+      return;
+    }
 
     const activeWidget = widgets.find(w => w.id === active.id);
     if (!activeWidget) return;
@@ -201,9 +208,15 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
     const oldIndex = columnWidgets.findIndex(w => w.id === active.id);
     const newIndex = columnWidgets.findIndex(w => w.id === over.id);
 
-    if (oldIndex === -1 || newIndex === -1) return;
+    console.log('Indexes:', { oldIndex, newIndex, columnWidgets: columnWidgets.length });
+
+    if (oldIndex === -1 || newIndex === -1) {
+      console.log('Invalid indexes');
+      return;
+    }
 
     const reorderedColumnWidgets = arrayMove(columnWidgets, oldIndex, newIndex);
+    console.log('Reordered:', reorderedColumnWidgets.map(w => w.id));
 
     // Update row positions
     const updatedWidgets = widgets.map(widget => {
@@ -222,6 +235,7 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
       return widget;
     });
 
+    console.log('Updated widgets:', updatedWidgets);
     onReorderWidgets?.(updatedWidgets);
   };
 

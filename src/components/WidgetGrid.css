@@ -90,6 +90,10 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.widget-menu-container {
+  position: relative;
+}
+
 .widget-drag-handle,
 .widget-menu-btn,
 .widget-delete-btn {
